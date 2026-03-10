@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    image: my-fastapi-app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:14.18
+    container_name: my-postgres
+    environment:
+      POSTGRES_USER: sandy
+      POSTGRES_PASSWORD: sandy
+      POSTGRES_DB: main_db
+    ports:
+      - "5431:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sandy -d main_db && pg_isready -U sandy -d testing"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
