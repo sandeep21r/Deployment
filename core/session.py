@@ -12,7 +12,6 @@ AsyncSessionLocal = async_sessionmaker(
 async def init_db():
     async with engine.begin() as conn:
         print("Connected to the database successfully.")
-        
 async def getSession():
     async with AsyncSessionLocal() as session:
         yield session
